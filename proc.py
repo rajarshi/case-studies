@@ -1,6 +1,9 @@
 import urllib, sys, os, json, time
 import cPickle as pickle
 
+## Requires that tour API token is contained in a file called API_TOKEN in the
+## current directory
+
 API_TOKEN = open('API_TOKEN', 'r').read()
 HOST = 'http://www.casesdatabase.com'
 SEARCH = '/api/search/?query=* AND (PublicationYear:%d)'

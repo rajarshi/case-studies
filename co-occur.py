@@ -38,10 +38,11 @@ def xtract_cooccur_for_case(c):
         stopwords = ['therapy', 'antagonist', 'receptor', 'treatment', 'agent', 'prophylaxis']
         l = []
         for term in terms:
-            for sw in stopwords: term = term.replace(sw, '')
+            #for sw in stopwords: term = term.replace(sw, '')
             for key in repMap.keys():
                 if term.find(key) >= 0:
-                    term = repMap[key]
+                    pass
+                #term = repMap[key]
             term = term.encode("ascii", "ignore").strip()
             l.append(term)
         return(list(set(l)))
@@ -66,6 +67,7 @@ def xtract_cooccur_for_case(c):
             'path_med':path_med}
             
 cases = pickle.load(open('cases.pickle', 'r'))
+print 'Loaded %d cases' % (len(cases))
 o1 = csv.writer(open('cooccurr-cond-med.csv', 'w'))
 o2 = csv.writer(open('cooccurr-path-med.csv', 'w'))
 n = 0

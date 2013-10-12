@@ -66,7 +66,12 @@ def parallelWorker(item):
     print the_pair
     return the_pair
 
-
+def getMorbidityByCondition(freqs, condition, exact = True):
+    if exact:
+        return filter(lambda x: condition in x[0], freqs)
+    else:
+        return filter(lambda x: x[0][0].find(condition) >= 0 or x[0][1].find(condition) >= 0, freqs)
+    
 if __name__ == '__main__':
     cases = pickle.load(open('cases.pickle'))
     allpairs = []
@@ -85,7 +90,6 @@ if __name__ == '__main__':
     uconds = set(chain.from_iterable(upair))
     print 'Got %d unique conditions' % (len(uconds))
     
-
     ## for each pair, get the count of occurrence
     freqs = Counter(allpairs)
     freqs = freqs.items()
@@ -109,8 +113,19 @@ if __name__ == '__main__':
     population = list(chain.from_iterable(population))
     obs = [ (pair, count, count/float(npair)) for pair, count in freqs]
 
+    ## pull out all co-morbidities that include tuberculosis as one of the conditions
+    ## output the (non tuberculosis) conditions, using the frequency of occurrence of the
+    ## co-morbidity to generate repeats
+    condition = 'tuberculosis'
+    conds = getMorbidityByCondition(freqs, condition, exact=False)
+    conds.sort(key = lambda x: x[1], reverse=True)
+    print 'Found %d co-morbidities that include %s' % (len(conds), condition)
+    conds = map(lambda x: [''.join(x[0]).replace(condition, '')] * x[1], conds)
+    ## use the contents of conds to make a word cloud
+    conds = list(chain.from_iterable(conds))
+    
     ## Use a specific value for min_freq to generate our heatmap image
-    freq_min = 250
+    freq_min = 150
     ofile = open('comorb-%d.csv' % (freq_min), 'w')
     o = csv.writer(ofile)
     o.writerow(['cond1', 'cond2', 'count', 'frac', 'sampled'])
